@@ -11,6 +11,7 @@ def alert_out(alert_number):
 		print("BP Alert!")
 	elif alert_number == 3:
 		print("PUL Alert!")
+		
 def ai_output(predBloodOxygen,predBloodPressure,prePulse):
     print('predicted blood oxygen is: ' + str(predBloodOxygen))
     print('predicted blood pressure is: ' + str(predBloodPressure))
