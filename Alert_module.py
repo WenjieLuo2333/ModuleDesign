@@ -1,63 +1,59 @@
-#It's the I/O documentation for the Health_Monitor_system
-#Especially for Alert System
+# It's the I/O documentation for Alert System
 
-#Wire Definition
+# Alert Sys
+import numpy
+class Alert():
+    def __init__(self):
+        self.bo = []
+        self.bp = []
+        self.pul = []
+        self.average_list = average_list = [[] for i in range(3)]
+        self.alert_flag = -1
 
-#Input Analyzer
-# Input -- Data from sensors.
+    def exceed_threshold(self, data, tp):
+        if tp == 0:
+            if not 0.1 <= data <= 0.3:
+                return 0
+            else:
+                return -1
+        elif tp == 1:
+            if not 80 <= data <= 120:
+                return 1
+            else:
+                return -1
+        else:
+            if not 60 <= data <= 90:
+                return 2
+            else:
+                return -1
 
-def Input_Analyzer_get_data():
-	"""
-	receive data from monitor devices
-	Format: ((tuple),int type_of_data)
-	integer type_of_data represent the source of the data.(blood oxygen or pressure or else)
-	(tuple) defines the data we get from sensors
-	"""
+    def Alert_Output(self):
+        """
+        Compare data with certain threthold
+        send flags to user interface module.
+        """
+        if self.alert_flag != -1:
+            return self.alert_flag
+        else:
+            return -1
 
-#Storage System
-def Storage_sys_get_data((data_pakage),type_of_data):
-	"""
-	Save the data_pakage into three different table according to type_of_data
-	Format: 
-	type_of_data:
-		blood oxygen: (double percent,time time)
-		blood presure: (double pressure,time time)
-		pulse: (double frequency, time time)
-	"""
+    def Alert_for_three_categories_input(self, data_in):
+        """
+        get data for each type from database.
+        format:
+            (double value,int type)
+        """
+        if len(self.average_list[data_in[1]]) < 20:
+            self.average_list[data_in[1]].append(float(data_in[0]))
+        else:
+            del (self.average_list[data_in[1]][0])
+            self.average_list[data_in[1]].append(float(data_in[0]))
 
-#AI Module
-def AI_module_input(bo,bp,pul)：
-	"""
-	bo,bp,pul are three lists represent the value of blood oxygen,blood pressure and pulse
-	bo,bp,pul: list [double value]
-	"""
+        if len(self.average_list[0]) > 2 and self.exceed_threshold(numpy.mean(self.average_list[0]),'bo') != -1:
+            self.alert_flag = self.exceed_threshold(numpy.mean(self.average_list[data_in[1]]),'bo')
+        if len(self.average_list[1]) > 2 and self.exceed_threshold(numpy.mean(self.average_list[1]),'bp') != -1:
+            self.alert_flag = self.exceed_threshold(numpy.mean(self.average_list[data_in[1]]),'bp')
+        if len(self.average_list[2]) > 2 and self.exceed_threshold(numpy.mean(self.average_list[2]),'pul') != -1:
+            self.alert_flag = self.exceed_threshold(numpy.mean(self.average_list[data_in[1]]),'pul')
 
-def AI_module_output():
-	"""
-	output format:
-		a double value for estimated health score
-	"""
 
-#User Interface
-def get_data():
-	"""
-	Get_data_from alert sys
-		format: three flags to trigger alert display
-
-	Get_data_from_data_base:
-		format:double values to display on screen
-	"""
-
-#Alert Sys
-def Alert_input():
-	"""
-	get data for each type from database.
-	format:
-		(double value,int type)
-	"""
-
-def Alert_Output():
-	"""
-	Compare data with certain threthold
-	send flags to user interface module.
-	"""
